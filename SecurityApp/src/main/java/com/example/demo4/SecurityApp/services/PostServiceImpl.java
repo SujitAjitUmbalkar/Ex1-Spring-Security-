@@ -3,6 +3,7 @@ package com.example.demo4.SecurityApp.services;
 import com.example.demo4.SecurityApp.dto.PostDTO;
 import com.example.demo4.SecurityApp.entities.PostEntity;
 //import com.example.demo4.SecurityApp.exceptions.ResourceNotFoundException;
+import com.example.demo4.SecurityApp.exceptions.NoSuchResourcesException;
 import com.example.demo4.SecurityApp.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,8 +40,7 @@ public class PostServiceImpl implements PostService{
     public PostDTO getPostById(Long postId) {
         PostEntity postEntity = postRepository
                 .findById(postId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Post not found with id "+postId));
-                .orElseThrow();
+                .orElseThrow(() -> new NoSuchResourcesException("Post not found with id "+postId));
         return modelMapper.map(postEntity, PostDTO.class);
     }
 }
