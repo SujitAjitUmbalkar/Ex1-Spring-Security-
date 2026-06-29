@@ -12,8 +12,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PostEntity {
-
+public class PostEntity
+{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
