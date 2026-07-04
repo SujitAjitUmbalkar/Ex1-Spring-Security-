@@ -1,5 +1,6 @@
 package com.example.demo4.SecurityApp.services;
 
+import com.example.demo4.SecurityApp.dto.LoginDto;
 import com.example.demo4.SecurityApp.dto.SignUpDto;
 import com.example.demo4.SecurityApp.dto.UserDto;
 import com.example.demo4.SecurityApp.entities.UserEntity;
@@ -10,7 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

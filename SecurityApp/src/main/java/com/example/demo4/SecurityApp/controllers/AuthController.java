@@ -4,6 +4,7 @@ import com.example.demo4.SecurityApp.dto.LoginDto;
 import com.example.demo4.SecurityApp.dto.LoginResponseDto;
 import com.example.demo4.SecurityApp.dto.SignUpDto;
 import com.example.demo4.SecurityApp.dto.UserDto;
+import com.example.demo4.SecurityApp.services.AuthService;
 import com.example.demo4.SecurityApp.services.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,11 +23,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signUp(@RequestBody SignUpDto signUpDto) {
+    public ResponseEntity<UserDto> signUp(@RequestBody SignUpDto signUpDto)
+    {
         UserDto userDto = userService.signUp(signUpDto);
         return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/login")          // returns token
+    public ResponseEntity<String> login(@RequestBody LoginDto loginDto,HttpServletRequest request , HttpServletResponse response)
+    {
+        String token  = authService.login(loginDto);
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(token);
     }
 
 }
