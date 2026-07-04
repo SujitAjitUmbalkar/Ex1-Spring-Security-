@@ -18,7 +18,7 @@ public class AppConfig
         return new ModelMapper();
     }
 
-    @Bean
+//    @Bean
     UserDetailsService myInMemoryUserDetailsService()
     {
         UserDetails normalUser = User                         // User from  org.springframework.security.core.userdetails

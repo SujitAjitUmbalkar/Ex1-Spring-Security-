@@ -1,10 +1,13 @@
 package com.example.demo4.SecurityApp;
 
 import com.example.demo4.SecurityApp.entities.UserEntity;
+import com.example.demo4.SecurityApp.entities.enums.Role;
 import com.example.demo4.SecurityApp.services.JwtService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.Set;
 
 @SpringBootTest
 class SecurityAppApplicationTests {
@@ -18,7 +21,7 @@ class SecurityAppApplicationTests {
 
         // dummy user created , jwt created after parsing user to method
 
-		UserEntity user = new UserEntity(4L, "sujit@gmail.com", "1234");
+		UserEntity user = new UserEntity(4L, "sujit@gmail.com", "1234","Sujit" , Set.of(Role.ADMIN));
 		String token = jwtService.generateToken(user);
 		System.out.println(token);
 
