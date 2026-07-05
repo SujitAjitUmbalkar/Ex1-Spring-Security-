@@ -4,6 +4,7 @@ import com.example.demo4.SecurityApp.dto.LoginDto;
 import com.example.demo4.SecurityApp.dto.SignUpDto;
 import com.example.demo4.SecurityApp.dto.UserDto;
 import com.example.demo4.SecurityApp.entities.UserEntity;
+import com.example.demo4.SecurityApp.exceptions.NoSuchResourcesException;
 import com.example.demo4.SecurityApp.repositories.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -38,6 +40,12 @@ public class UserService implements UserDetailsService
     {
         return userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    public UserEntity getUserById(Long userId)
+    {
+        return userRepository.findById(userId).orElseThrow(() -> new NoSuchResourcesException("User with id "+ userId +
+                " not found"));
     }
 
     public UserDto signUp(SignUpDto signUpDto)
