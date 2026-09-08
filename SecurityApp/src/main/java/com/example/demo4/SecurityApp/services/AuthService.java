@@ -1,12 +1,13 @@
 package com.example.demo4.SecurityApp.services;
 
 import com.example.demo4.SecurityApp.dto.LoginDto;
+import com.example.demo4.SecurityApp.dto.LoginResponseDto;
 import com.example.demo4.SecurityApp.entities.UserEntity;
+import com.example.demo4.SecurityApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,17 +16,31 @@ public class AuthService
 {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserService userService;
 
-    public String login(LoginDto loginDto)
+    public LoginResponseDto login(LoginDto loginDto)
     {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword())
         );
 
         UserEntity user = (UserEntity) authentication.getPrincipal();       // get user
-        return jwtService.generateToken(user);
+
+         String accessToken = jwtService.generateAccessToken(user);
+         String refreshToken = jwtService.generateRefreshToken(user);
+
+         return new LoginResponseDto(user.getId(), accessToken, refreshToken);
     }
 
-}
+    public LoginResponseDto refreshToken(String refreshToken)
+    {
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
 
-// dont inject dependencies of UserDetailsService and AuthenticationManager in each other , cyclic exception forms
+        UserEntity user = userService.getUserById(userId);
+
+        String accessToken = jwtService.generateAccessToken(user);
+
+        return new  LoginResponseDto(user.getId(), accessToken, refreshToken);
+    }
+}
+//call refresh method when you access token expires , you need to pass cookies

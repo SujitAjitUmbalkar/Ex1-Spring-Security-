@@ -22,7 +22,7 @@ class SecurityAppApplicationTests {
         // dummy user created , jwt created after parsing user to method
 
 		UserEntity user = new UserEntity(4L, "sujit@gmail.com", "1234","Sujit" , Set.of(Role.ADMIN));
-		String token = jwtService.generateToken(user);
+		String token = jwtService.generateAccessToken(user);
 		System.out.println(token);
 
 		Long id = jwtService.getUserIdFromToken(token);
