@@ -1,6 +1,6 @@
 package com.example.demo4.SecurityApp.config;
 
-import com.example.demo4.SecurityApp.entities.enums.Role;
+import com.example.demo4.SecurityApp.entities.enums.Permission;
 import com.example.demo4.SecurityApp.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,31 +15,52 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class WebSecurityConfig
-{
+public class WebSecurityConfig {
+
     private final JwtAuthFilter jwtAuthFilter;
 
-    private static final String[] PUBLIC_ROUTES = {"/error", "/auth/**", "/home.html"};
+    private static final String[] PUBLIC_ROUTES = {
+            "/error",
+            "/auth/**",
+            "/home.html"
+    };
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
-    {
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity
                 .csrf(csrfConfig -> csrfConfig.disable())
+
                 .sessionManagement(sessionManagementConfig ->
-                        sessionManagementConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        sessionManagementConfig
+                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())
 
-                        .requestMatchers(HttpMethod.GET, "/posts/**").hasRole(Role.USER.name())
-
+                        // Public endpoints
                         .requestMatchers(PUBLIC_ROUTES).permitAll()
 
+                        // Permission-based authorization
+                        .requestMatchers(HttpMethod.POST, "/posts/**")
+                        .hasAuthority(Permission.POST_CREATE.name())
+
+                        .requestMatchers(HttpMethod.GET, "/posts/**")
+                        .hasAuthority(Permission.POST_VIEW.name())
+
+                        .requestMatchers(HttpMethod.PUT, "/posts/**")
+                        .hasAuthority(Permission.POST_UPDATE.name())
+
+                        .requestMatchers(HttpMethod.DELETE, "/posts/**")
+                        .hasAuthority(Permission.POST_DELETE.name())
+
+                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
 
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return httpSecurity.build();
     }

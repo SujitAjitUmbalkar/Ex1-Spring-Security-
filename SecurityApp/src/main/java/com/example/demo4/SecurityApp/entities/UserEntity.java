@@ -1,6 +1,8 @@
 package com.example.demo4.SecurityApp.entities;
 
+
 import com.example.demo4.SecurityApp.entities.enums.Role;
+import com.example.demo4.SecurityApp.utils.PermissionMapping;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,8 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Getter
 @Setter
@@ -37,16 +40,32 @@ public class UserEntity implements UserDetails
             joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "role_name")
-    private Set<Role> roles;                         // A user can have multiple roles.
+    private Set<Role> roles;
 
+//    you can store permissions in db  , we are using another way
+
+//    @ElementCollection(fetch = FetchType.EAGER )
+//    @Enumerated(EnumType.STRING)
+//    private Set<Permission> permissions;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
-        return roles.stream()                        // Iterate over all roles.
-                .map(role ->                         // Convert each Role enum...
-                        new SimpleGrantedAuthority("ROLE_" + role.name())) // ...into Spring Security authority (ROLE_ADMIN).
-                .collect(Collectors.toSet());        // Return all authorities as a Set.
+        Set<GrantedAuthority> authorities = new HashSet<>();
+
+        roles.forEach(role -> {
+                            // Add permissions of this role
+                            Set<SimpleGrantedAuthority> permissions =  PermissionMapping.authorities(role);
+
+                            authorities.addAll(permissions);
+
+                            // Add role authority
+                            authorities.add(
+                                    new SimpleGrantedAuthority("ROLE_" + role.name())
+            );
+        });
+
+        return authorities;
     }
 
     @Override
@@ -59,16 +78,3 @@ public class UserEntity implements UserDetails
         return this.email;
     }
 }
-
-/*
-
-    @CollectionTable(               //Tells Hibernate to create a separate join table named "user_roles"
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id") // * linked to the main user table using the foreign key column "user_id".
-    )
-    @Column(name = "role_name")
-
-, Hibernate can guess the wrong default table names or fail to find old data.
-These lines force Hibernate to look in the exact same table (user_roles) and column every single time.
-
- */
