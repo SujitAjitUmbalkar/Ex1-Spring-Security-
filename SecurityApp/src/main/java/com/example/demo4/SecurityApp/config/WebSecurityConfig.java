@@ -1,5 +1,6 @@
 package com.example.demo4.SecurityApp.config;
 
+import com.example.demo4.SecurityApp.entities.enums.Role;
 import com.example.demo4.SecurityApp.filters.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,8 @@ public class WebSecurityConfig
 {
     private final JwtAuthFilter jwtAuthFilter;
 
+    private static final String[] PUBLIC_ROUTES = {"/error", "/auth/**", "/home.html"};
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
     {
@@ -27,9 +30,11 @@ public class WebSecurityConfig
                         sessionManagementConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/error", "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/posts/**").hasAnyRole(Role.ADMIN.name(), Role.CREATOR.name())
 
-                        .requestMatchers(HttpMethod.GET, "/posts").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**").hasRole(Role.USER.name())
+
+                        .requestMatchers(PUBLIC_ROUTES).permitAll()
 
                         .anyRequest().authenticated()
                 )

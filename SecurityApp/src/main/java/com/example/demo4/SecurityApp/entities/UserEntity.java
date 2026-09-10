@@ -29,14 +29,16 @@ public class UserEntity implements UserDetails
     private String password;
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER)      // Store multiple roles in a separate table and load them immediately.
-    @CollectionTable(               //Tells Hibernate to create a separate join table named "user_roles"
+
+    @ElementCollection(fetch = FetchType.EAGER )      // Store multiple roles in a separate table and load them immediately.
+    @Enumerated(EnumType.STRING)                     // Save enum values as strings (e.g., ADMIN, USER) instead of numbers.
+    @CollectionTable(
             name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id") // * linked to the main user table using the foreign key column "user_id".
+            joinColumns = @JoinColumn(name = "user_id")
     )
     @Column(name = "role_name")
-    @Enumerated(EnumType.STRING)                     // Save enum values as strings (e.g., ADMIN, USER) instead of numbers.
     private Set<Role> roles;                         // A user can have multiple roles.
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
