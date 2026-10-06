@@ -48,6 +48,11 @@ public class UserService implements UserDetailsService
                 " not found"));
     }
 
+    public UserEntity loadUserByEmail(String email)
+    {
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
     public UserDto signUp(SignUpDto signUpDto)
     {
         Optional<UserEntity> user = userRepository.findByEmail(signUpDto.getEmail());
@@ -62,4 +67,8 @@ public class UserService implements UserDetailsService
         return modelMapper.map(savedUser, UserDto.class);
     }
 
+    public UserEntity save(UserEntity userEntity)
+    {
+     return   userRepository.save(userEntity);
+    }
 }

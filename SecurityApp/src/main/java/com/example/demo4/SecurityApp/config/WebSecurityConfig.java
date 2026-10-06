@@ -2,6 +2,7 @@ package com.example.demo4.SecurityApp.config;
 
 import com.example.demo4.SecurityApp.entities.enums.Permission;
 import com.example.demo4.SecurityApp.filters.JwtAuthFilter;
+import com.example.demo4.SecurityApp.handlers.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     private static final String[] PUBLIC_ROUTES = {
             "/error",
@@ -50,7 +52,13 @@ public class WebSecurityConfig {
                 .addFilterBefore(
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class
-                );
+                )
+
+                .oauth2Login(oauth2LoginConfig -> oauth2LoginConfig
+                        .failureUrl("/login?error=true")
+                        .successHandler(oAuth2SuccessHandler));
+
+
 
         return httpSecurity.build();
     }
