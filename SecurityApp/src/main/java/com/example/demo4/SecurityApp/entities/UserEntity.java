@@ -32,7 +32,6 @@ public class UserEntity implements UserDetails
     private String password;
     private String name;
 
-
     @ElementCollection(fetch = FetchType.EAGER )      // Store multiple roles in a separate table and load them immediately.
     @Enumerated(EnumType.STRING)                     // Save enum values as strings (e.g., ADMIN, USER) instead of numbers.
     @CollectionTable(

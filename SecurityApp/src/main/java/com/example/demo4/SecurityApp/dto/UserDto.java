@@ -13,5 +13,5 @@ public class UserDto
     private String email;
     private String name;
     private Set<Role> roles;
-    private Set<Permission> permissions;
+//    private Set<Permission> permissions;
 }
