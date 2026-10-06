@@ -9,6 +9,7 @@ import com.example.demo4.SecurityApp.repositories.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -39,11 +40,12 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    @Secured("ROLE_USER")
     public PostDTO getPostById(Long postId)
     {
-        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        UserEntity userEntity = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        log.info("user {} ", userEntity);
+//        log.info("user {} ", userEntity);     // Not needed because we have permitted that route to all , so ne need to log in and there would be no context holder
 
         PostEntity postEntity = postRepository
                 .findById(postId)

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity(securedEnabled = true)        // for security method annotations
 public class WebSecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -44,8 +46,10 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/posts/**")
                         .hasAuthority(Permission.POST_CREATE.name())
 
-                        .requestMatchers(HttpMethod.GET, "/posts/**")
-                        .hasAuthority(Permission.POST_VIEW.name())
+//                        .requestMatchers(HttpMethod.GET, "/posts/**")
+//                        .hasAuthority(Permission.POST_VIEW.name())
+
+                        .requestMatchers(HttpMethod.GET , "/posts/**").permitAll()
 
                         .requestMatchers(HttpMethod.PUT, "/posts/**")
                         .hasAuthority(Permission.POST_UPDATE.name())
