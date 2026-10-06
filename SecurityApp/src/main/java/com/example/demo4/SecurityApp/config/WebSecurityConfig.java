@@ -42,22 +42,8 @@ public class WebSecurityConfig {
                         // Public endpoints
                         .requestMatchers(PUBLIC_ROUTES).permitAll()
 
-                        // Permission-based authorization
-                        .requestMatchers(HttpMethod.POST, "/posts/**")
-                        .hasAuthority(Permission.POST_CREATE.name())
+                        .requestMatchers("/posts/**").authenticated()       // when you use security method annotations in service
 
-//                        .requestMatchers(HttpMethod.GET, "/posts/**")
-//                        .hasAuthority(Permission.POST_VIEW.name())
-
-                        .requestMatchers(HttpMethod.GET , "/posts/**").permitAll()
-
-                        .requestMatchers(HttpMethod.PUT, "/posts/**")
-                        .hasAuthority(Permission.POST_UPDATE.name())
-
-                        .requestMatchers(HttpMethod.DELETE, "/posts/**")
-                        .hasAuthority(Permission.POST_DELETE.name())
-
-                        // Everything else requires authentication
                         .anyRequest().authenticated()
                 )
 
